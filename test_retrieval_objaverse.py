@@ -104,10 +104,10 @@ def batched_model_inference(model, xyz_batch, feat_batch, img_feat_batch, config
     return torch.cat(batch_features, dim=0)
 
 
-def retrieve_score(image_features_tensors,text_features_tensors):
-    num_samples = image_features_tensors.shape[0]
+def retrieve_score(three_d_features_tensors,text_features_tensors):
+    num_samples = three_d_features_tensors.shape[0]
     #image ->text
-    similarity_matrix = torch.matmul(image_features_tensors, text_features_tensors.t())
+    similarity_matrix = torch.matmul(three_d_features_tensors, text_features_tensors.t())
 
     _, indices = similarity_matrix.topk(10, dim=1, largest=True, sorted=True)
 
@@ -123,7 +123,7 @@ def retrieve_score(image_features_tensors,text_features_tensors):
     print(f'R@10: {r_at_10}')
 
     #text ->image
-    similarity_matrix = torch.matmul(text_features_tensors, image_features_tensors.t())
+    similarity_matrix = torch.matmul(text_features_tensors, three_d_features_tensors.t())
 
     _, indices = similarity_matrix.topk(10, dim=1, largest=True, sorted=True)
 
@@ -184,7 +184,7 @@ test_path_list=list(caption_dict.keys())
 print(len(test_path_list))
 
 
-image_features_list=[]
+three_d_features_list=[]
 text_features_tensors = torch.load("./text_manual_text_objaverse_1280.pt",map_location=device)
 text_features_tensors /= text_features_tensors.norm(dim=-1, keepdim=True)
 
@@ -194,11 +194,11 @@ with torch.no_grad():
         xyz=torch.unsqueeze(xyz.to(device), 0)
         feat=torch.unsqueeze(feat.to(device), 0)
         images_feat=torch.unsqueeze(images_feat.to(device), 0)
-        image_features = model(images_feat[:,0:10,:].to(device),N_sample,xyz, feat)
-        image_features = F.normalize(image_features, dim=1)
-        image_features_list.append(torch.squeeze(image_features))
+        three_d_features = model(images_feat[:,0:10,:].to(device),N_sample,xyz, feat)
+        three_d_features = F.normalize(three_d_features, dim=1)
+        three_d_features_list.append(torch.squeeze(three_d_features))
         torch.cuda.empty_cache()
-    image_features_tensors=torch.stack(image_features_list)
+    three_d_features_tensors=torch.stack(three_d_features_list)
     
-    retrieve_score(image_features_tensors,text_features_tensors)
+    retrieve_score(three_d_features_tensors,text_features_tensors)
 
