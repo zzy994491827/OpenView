@@ -37,14 +37,14 @@ if torch.cuda.is_available():
 device = "cuda:7" if torch.cuda.is_available() else "cpu"
 
 
-def method(image_features,category,text_features):
+def method(three_d_features,category,text_features):
     #scores of average image features with text features
     #the result is best
     true_top1=False
     true_top3=False
     true_top5=False
     with torch.no_grad():
-        similarity = (100.0 * image_features @ text_features.T)
+        similarity = (100.0 * three_d_features @ text_features.T)
         _,index_x=similarity.topk(5, dim=1, largest=True, sorted=True)
         index=index_x[0]
         if categories[index[0]] == category:
@@ -129,9 +129,9 @@ with torch.no_grad():
         feat=torch.unsqueeze(feat.to(device), 0)        
         images_feat=torch.unsqueeze(torch.from_numpy(data_dict[key]["image_feat"]).type(torch.float32).to(device), 0)
 
-        image_features = model(images_feat[:,0:10,:].to(device), N_sample, xyz.to(device), feat.to(device))
-        image_features = F.normalize(image_features, dim=-1)
-        top1_accuracy, top3_accuracy, top5_accuracy = method(image_features,category,text_features.to(device))
+        three_d_features = model(images_feat[:,0:10,:].to(device), N_sample, xyz.to(device), feat.to(device))
+        three_d_features = F.normalize(three_d_features, dim=-1)
+        top1_accuracy, top3_accuracy, top5_accuracy = method(three_d_features,category,text_features.to(device))
 
         results['top1'] += top1_accuracy
         results['top3'] += top3_accuracy
