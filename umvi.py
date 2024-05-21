@@ -146,9 +146,9 @@ class FusionLayer(nn.Module):
         return x_output, y_output
 
 #full+hard
-class Umvi_23_2(nn.Module):
+class Umvi_23(nn.Module):
     def __init__(self, num_layers, d_model, nhead, device):
-        super(Umvi_23_2, self).__init__()
+        super(Umvi_23, self).__init__()
         self.fusion_layers = nn.ModuleList([FusionLayer(d_model, nhead) for _ in range(num_layers)])
         self.d_model=d_model
         self.device=device
