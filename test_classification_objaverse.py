@@ -75,7 +75,7 @@ def batched_model_inference(model, xyz_batch, feat_batch, img_feat_batch, config
         xyz_sub = xyz_batch[i:i + batch_size]
         feat_sub = feat_batch[i:i + batch_size]
         images_feat = img_feat_batch[i:i+batch_size]
-        features = model(images_feat[:,0:N_sample,:].to(device),N_sample,xyz_sub, feat_sub)
+        features = model(images_feat[:,0:N_sample,:].to(device),N_sample,xyz_sub, feat_sub,None,False,None)
         batch_features.append(features)
     return torch.cat(batch_features, dim=0)
 
@@ -160,7 +160,7 @@ froze_visual_encoder=config.froze_visual_encoder
 batch_size=config.batch_size
 
 print("Loading model...")
-model = Umvi_23_2(num_layers, d_model, nhead,device).to(device)
+model = Umvi_23(num_layers, d_model, nhead,device).to(device)
 
 state_dict = torch.load("./model/model_pt/final.pt", map_location=torch.device('cpu'))
 if 'module.' in list(state_dict.keys())[0]:
