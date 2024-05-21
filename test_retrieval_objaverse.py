@@ -92,17 +92,6 @@ def load_npy_batch(file_paths, num_points=10000, y_up=True):
     return batch_xyz, batch_features,batch_image_feature
 
 
-def batched_model_inference(model, xyz_batch, feat_batch, img_feat_batch, config):
-    batch_features = []
-    for i in range(0, xyz_batch.size(0), batch_size):
-        xyz_sub = xyz_batch[i:i + batch_size]
-        feat_sub = feat_batch[i:i + batch_size]
-        images_feat = img_feat_batch[i:i+batch_size]
-        random_numbers = random.sample(range(12), N_sample)
-        features = model(images_feat[:,random_numbers,:].to(device),N_sample,xyz_sub, feat_sub)
-        batch_features.append(features)
-    return torch.cat(batch_features, dim=0)
-
 
 def retrieve_score(three_d_features_tensors,text_features_tensors):
     num_samples = three_d_features_tensors.shape[0]
@@ -166,7 +155,7 @@ froze_visual_encoder=config.froze_visual_encoder
 batch_size=config.batch_size
 
 print("Loading model...")
-model = Umvi_23_2(num_layers, d_model, nhead,device).to(device)
+model = Umvi_23(num_layers, d_model, nhead,device).to(device)
 
 state_dict = torch.load("./model/model_pt/final.pt", map_location=torch.device('cpu'))
 if 'module.' in list(state_dict.keys())[0]:
@@ -194,7 +183,7 @@ with torch.no_grad():
         xyz=torch.unsqueeze(xyz.to(device), 0)
         feat=torch.unsqueeze(feat.to(device), 0)
         images_feat=torch.unsqueeze(images_feat.to(device), 0)
-        three_d_features = model(images_feat[:,0:10,:].to(device),N_sample,xyz, feat)
+        three_d_features = model(images_feat[:,0:10,:].to(device),N_sample,xyz, feat,None,False,None)
         three_d_features = F.normalize(three_d_features, dim=1)
         three_d_features_list.append(torch.squeeze(three_d_features))
         torch.cuda.empty_cache()
