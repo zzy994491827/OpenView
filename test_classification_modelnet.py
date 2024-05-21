@@ -91,7 +91,7 @@ froze_visual_encoder=config.froze_visual_encoder
 batch_size=config.batch_size
 
 print("Loading model...")
-model = Umvi_23_2(num_layers, d_model, nhead,device).to(device)
+model = Umvi_23(num_layers, d_model, nhead,device).to(device)
 
 state_dict = torch.load("./model/model_pt/final.pt", map_location=torch.device('cpu'))
 if 'module.' in list(state_dict.keys())[0]:
@@ -136,7 +136,7 @@ with torch.no_grad():
         pc_features=pc_features.unsqueeze(0)
         images_feat=images_feat.unsqueeze(0)
 
-        three_d_features = model(images_feat[:,0:10,:].to(device), N_sample, xyz.to(device), pc_features.to(device))
+        three_d_features = model(images_feat[:,0:10,:].to(device), N_sample, xyz.to(device), pc_features.to(device),None,False,None)
         three_d_features = F.normalize(three_d_features, dim=-1)
         top1_accuracy, top3_accuracy, top5_accuracy = method(three_d_features,category,text_features.to(device))
 
