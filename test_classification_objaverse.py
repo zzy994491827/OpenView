@@ -81,14 +81,14 @@ def batched_model_inference(model, xyz_batch, feat_batch, img_feat_batch, config
 
 
 
-def method(image_features,category,text_features):
+def method(three_d_features,category,text_features):
     #scores of average image features with text features
     #the result is best
     true_top1=False
     true_top3=False
     true_top5=False
     with torch.no_grad():
-        similarity = (100.0 * image_features @ text_features.T)
+        similarity = (100.0 * three_d_features @ text_features.T)
         _,index_x=similarity.topk(5, dim=1, largest=True, sorted=True)
         index=index_x[0]
         if categories[index[0]] == category:
@@ -103,10 +103,10 @@ def method(image_features,category,text_features):
         
         return true_top1,true_top3,true_top5
 
-def method_batch(image_features, categories, text_features, category_to_index):
+def method_batch(three_d_features, categories, text_features, category_to_index):
     # Compute similarities between batch of image features and all text features
     with torch.no_grad():
-        similarity = 100.0 * image_features @ text_features.T  # Shape: [batch_size, num_categories]
+        similarity = 100.0 * three_d_features @ text_features.T  # Shape: [batch_size, num_categories]
 
         # Get top-5 indices for each item in the batch
         top_k_values, top_k_indices = similarity.topk(5, dim=1, largest=True, sorted=True)
@@ -121,7 +121,7 @@ def method_batch(image_features, categories, text_features, category_to_index):
         top5_correct = (top_k_indices == category_indices.expand(-1, 5)).any(dim=1).float().sum()
 
     # Convert sums to proportions
-    num_items = image_features.size(0)
+    num_items = three_d_features.size(0)
     top1_accuracy = top1_correct 
     top3_accuracy = top3_correct 
     top5_accuracy = top5_correct 
@@ -187,10 +187,10 @@ with torch.no_grad():
         batch_categories = [data[j]["category"] for j in range(i, min(i + batch_size, num_samples))]
         
         xyz_batch, feat_batch, img_feat_batch = load_npy_batch(batch_paths)
-        image_features = batched_model_inference(model, xyz_batch, feat_batch, img_feat_batch, config)
-        image_features = F.normalize(image_features, dim=-1)
+        three_d_features = batched_model_inference(model, xyz_batch, feat_batch, img_feat_batch, config)
+        three_d_features = F.normalize(three_d_features, dim=-1)
         
-        top1_accuracy, top3_accuracy, top5_accuracy = method_batch(image_features, batch_categories, text_feature, category2idx)
+        top1_accuracy, top3_accuracy, top5_accuracy = method_batch(three_d_features, batch_categories, text_feature, category2idx)
         
         results['top1'] += top1_accuracy
         results['top3'] += top3_accuracy
