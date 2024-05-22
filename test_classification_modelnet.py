@@ -67,7 +67,7 @@ class config():
         self.d_model = 1280
         self.nhead = 32
         self.num_layers = 6
-        self.N_sample = 12
+        self.N_sample = 10
         self.logit_scale_init=14.28
         self.num_epochs = 15
         self.warm_up_ratio = 0.1
