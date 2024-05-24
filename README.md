@@ -13,8 +13,8 @@ If you would to run the testing or (and) training locally, you may need to insta
 
 1. Create a conda environment and install [pytorch](https://pytorch.org/get-started/previous-versions/), [MinkowskiEngine](https://nvidia.github.io/MinkowskiEngine/quick_start.html), and [DGL](https://www.dgl.ai/pages/start.html) by the following commands or their official guides:
 ```
-conda create -n OpenShape python=3.9
-conda activate OpenShape
+conda create -n OpenView python=3.9
+conda activate OpenView
 conda install pytorch==1.12.1 torchvision==0.13.1 torchaudio==0.12.1 cudatoolkit=11.3 -c pytorch
 pip install -U git+https://github.com/NVIDIA/MinkowskiEngine
 conda install -c dglteam/label/cu113 dgl
