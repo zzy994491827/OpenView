@@ -1,11 +1,7 @@
 # OpenView: Cross-Modal 3D Representation with Multi-View Images and Point Clouds
-##### State: The paper is under review.
+##### State: The paper is published.
 
 ##### Code of " OpenView: Cross-Modal 3D Representation with Multi-View Images and Point Clouds "
-
-## Checkpoints
-
-Due to the difficulty of sharing large files anonymously, the model checkpoints and test data will be released when the paper is published.
 
 ## Installation
 
